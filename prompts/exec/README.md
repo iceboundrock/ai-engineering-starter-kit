@@ -24,7 +24,7 @@ PR_URL=https://github.com/<owner>/<repo>/pull/<n> REVIEWER=<login> ./fill.sh 03-
 ./fill.sh -h   # each template's variables
 ```
 
-A template with any unset or empty variable is skipped rather than half-filled. With no template named, every template whose variables are set is filled.
+Values are inserted literally. A template with any unset or empty variable is skipped rather than half-filled, and a skipped template, or one whose output cannot be written, loses its output from an earlier run, so no stale prompt is left behind for it. With no template named, every template whose variables are set is filled.
 
 ## Why they work this way
 
