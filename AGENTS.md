@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## 1. What This Repository Is
 
-A library of **prompt templates**, plus a playbook (`SOP.md`), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Agents never run anything from this repository; the one script, `prompts/exec/fill.sh`, only fills placeholders for the human. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
+A library of **prompt templates**, plus a playbook (`SOP.md`), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Agents never run anything from this repository: `prompts/exec/fill.sh` only fills placeholders for the human, and `tests/` checks that script and the jq commands in the exec templates. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
 
 Every template serves at least one of two goals:
 
@@ -35,6 +35,9 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
 ├── SOP.md                 # Main line: clarify → scope → build ⇄ verify → checkpoints → demo
 ├── docs/
 │   └── non-code-rules.md  # Writing rules for issues, PRs, and other non-code artifacts
+├── tests/
+│   ├── fill.test.sh       # Regression tests for fill.sh
+│   └── gates.test.sh      # Regression tests for the jq checks in 02-review and 04-merge
 ├── templates/
 │   ├── SCOPE.template.md  # Shared state between the team and the agents
 │   ├── AGENTS.template.md # Optional engineering rules for the target repository
@@ -157,6 +160,10 @@ Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in
 
 `prompts/exec/fill.sh` replaces each `{{NAME}}` with the environment variable `NAME` and writes the result to the gitignored `prompts/exec/filled/`. It finds placeholders by scanning the templates, so adding or renaming one needs no script change. Placeholder names must use only `A–Z`, `0–9`, and `_`, and a value used by several templates keeps the same name in all of them (for example `{{PR_URL}}`).
 
+### Tests
+
+`tests/` holds deterministic tests on synthetic inputs; they need only bash and jq, and never touch GitHub. `tests/gates.test.sh` runs the jq programs extracted from the templates: the first `bash` block after `## 0. Pre-flight` in 02-review and after `## 1. Check before merging` in 04-merge. Keep those headings and blocks in place, or update the test with them.
+
 ## 6. Making a Change
 
 1. Read the template you are changing **and** the other templates in the same family.
@@ -175,6 +182,7 @@ Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in
 - [ ] Human decisions have explicit stop points
 - [ ] Shared vocabulary (starter) and contracts / duplicated rules (exec) are consistent across files
 - [ ] Exec placeholder names use only `A–Z`, `0–9`, and `_`, and `prompts/exec/fill.sh -h` lists the expected ones
+- [ ] If you changed `fill.sh` or a jq check in 02-review or 04-merge: `bash tests/fill.test.sh` and `bash tests/gates.test.sh` pass, with a case for the changed behavior
 
 ## 8. Don'ts
 

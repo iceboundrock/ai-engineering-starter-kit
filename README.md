@@ -23,6 +23,7 @@ Non-goals: letting an agent finish a project unattended, maximizing automation (
 - `prompts/04-demo.md` (Claude Code): a rehearsed demo of verified behavior, with scope frozen.
 - `prompts/exec/`: templates for ongoing work on GitHub, from issue to merge. Its README explains the flow and the design decisions.
 - `prompts/exec/fill.sh`: fills the exec templates' `{{...}}` placeholders from environment variables into the gitignored `prompts/exec/filled/`. Run it with `-h` to see each template's variables.
+- `tests/`: regression tests for `fill.sh` and for the jq checks in `02-review` and `04-merge`. Run `bash tests/fill.test.sh` and `bash tests/gates.test.sh`; they need bash and jq.
 - `templates/SCOPE.template.md`: starting point for `SCOPE.md`, the shared state between the team and the agents.
 - `templates/AGENTS.template.md`, `templates/CLAUDE.template.md`: optional engineering rules for the target repository, added only with the host team's permission.
 - `AGENTS.md`, `CLAUDE.md`: instructions for agents maintaining this repository.
