@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## 1. What This Repository Is
 
-A library of **prompt templates**, plus a playbook (SOP), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Nothing here is executed. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
+A library of **prompt templates**, plus a playbook (`SOP.md`), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Nothing here is executed. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
 
 Every template serves at least one of two goals:
 
@@ -28,7 +28,16 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
 
 ```
 .
-├── AGENTS.md
+├── AGENTS.md              # This guide, for agents maintaining the repository
+├── CLAUDE.md              # Claude Code bridge to this guide
+├── README.md              # Purpose and file map
+├── SOP.md                 # Main line: clarify → scope → build ⇄ verify → checkpoints → demo
+├── docs/
+│   └── non-code-rules.md  # Writing rules for issues, PRs, and other non-code artifacts
+├── templates/
+│   ├── SCOPE.template.md  # Shared state between the team and the agents
+│   ├── AGENTS.template.md # Optional engineering rules for the target repository
+│   └── CLAUDE.template.md # Claude Code bridge to AGENTS.md
 └── prompts/
     ├── 01-scope.md        # Starter: clarify goal, P0, success oracles; no code
     ├── 02-build.md        # Starter: build one vertical slice with a bounded feedback loop
@@ -41,7 +50,7 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
         └── 04-merge.md      # Merge, clean up, update issues, pick next from EPIC
 ```
 
-- File names: `<NN>-<kebab-name>.md`, where `NN` is the step's order within its family.
+- Prompt template file names: `<NN>-<kebab-name>.md`, where `NN` is the step's order within its family.
 - One template per file. The two families number independently.
 
 ## 3. Conventions for All Templates
@@ -67,6 +76,8 @@ The human adds the problem statement and any context to a template and sends it 
 ```
 
 `02-build` and `03-verify` are expected to repeat, one vertical slice at a time.
+
+`SOP.md` is the main line: it says at which step each template is sent, to which agent, and what the human checks in between. When you change a template's role, inputs, or outputs, update `SOP.md` to match. The templates and agents share state through `SCOPE.md` (from `templates/SCOPE.template.md`); keep its section names in step with the templates and SOP steps that refer to them.
 
 ### Rules
 

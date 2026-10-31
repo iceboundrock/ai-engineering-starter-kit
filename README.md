@@ -16,25 +16,19 @@ Claude Code plans and builds; Codex reviews, so the review comes from a differen
 Not goals: letting an agent finish a project unattended, maximizing automation (agent fleets, long unattended loops), or storing project-specific problems, code, or data.
 
 ## Files
-- `SOP-01-clarify.md`: human/team conversation for the first 20 minutes.
-- `AGENTS.md`: persistent, compact engineering and evidence rules.
-- `CLAUDE.md`: Claude Code bridge to `AGENTS.md`.
-- `prompts/01-scope.md`: convert the task into P0, acceptance oracles, and a first slice.
-- `prompts/02-build.md`: implement → execute → measure → fix, with a stall breaker.
-- `prompts/03-verify.md`: skeptical coverage and evidence review.
-- `prompts/04-demo.md`: truthful, reproducible demonstration.
-
-## Recommended operating sequence
-1. Read the problem and any existing repository instructions; follow the host team's tool/data policy.
-2. Use SOP 01 to agree the goal, success oracles, MVP, environment, and demo format.
-3. Use `01-scope` briefly to check for overlooked requirements, **not** to replace team discussion.
-4. Use `02-build` on the next small slice. Verify each increment. If stuck for two non-improving attempts, stop and diagnose.
-5. Use `03-verify` periodically and before demo. Make independent expectations explicit.
-6. Use `04-demo` only with tested behavior, with honest caveats.
+- `SOP.md`: the main line, from kickoff to demo. Start here.
+- `prompts/01-scope.md` (Claude Code, plan mode): convert the task into P0, acceptance oracles, and a first slice.
+- `prompts/02-build.md` (Claude Code): implement → execute → measure → fix, with a stall breaker.
+- `prompts/03-verify.md` (Codex): skeptical coverage and evidence review.
+- `prompts/04-demo.md` (Claude Code): truthful, reproducible demonstration.
+- `prompts/exec/`: templates for ongoing work on GitHub, from issue to merge.
+- `templates/SCOPE.template.md`: starting point for `SCOPE.md`, the shared state between the team and the agents.
+- `templates/AGENTS.template.md`, `templates/CLAUDE.template.md`: optional engineering rules for the target repository, added only with the host team's permission.
+- `AGENTS.md`, `CLAUDE.md`: instructions for agents maintaining this repository.
 
 ## Examples of independent checks
 - Data transformer: specified input/output pair; error cases; property checks.
-- Battery simulator: hand-calculated 2-step example, SOC/energy constraints, comparable baseline initial/final state.
+- Stateful simulation (for example, inventory or a ledger): hand-calculated two-step example, conservation invariants (nothing created or lost), initial/final state compared against a trusted baseline.
 - API: contract example, valid/invalid response checks, idempotency under retry where required.
 - Interactive UI: user flow actually exercised, critical state transitions, fallback CLI output.
 
@@ -43,12 +37,3 @@ Not goals: letting an agent finish a project unattended, maximizing automation (
 - No indefinite loops, large agent fleets, or infrastructure provisioning in a timeboxed session.
 - Prefer a verified end-to-end P0 over optimizations of weak or self-referential metrics.
 - If verification cannot be automated, explain the residual human judgment needed.
-
-## Fast human unblock question
-> What is the biggest blocker to the next *verified* runnable milestone? Show the evidence, smallest experiment, and what you need from me.
-
-## Five-hour example checkpoints (adapt to the actual demo time)
-- ~60 min: representative input produces observable output.
-- ~135 min: core P0 behavior implemented and tested.
-- ~205 min: end-to-end demo exists.
-- Final ~45 min: freeze scope, review evidence, rehearse demo, present.
