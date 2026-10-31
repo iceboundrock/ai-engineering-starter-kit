@@ -1,8 +1,8 @@
-Plan and implement the work described in this issue: 
+# 01 — Implement an Issue
 
-* https://github.com/Lychee-Technology/forma/issues/720
+**Issue:** {{ISSUE_URL}}
 
-Take the issue from specification to a complete, validated implementation, delivered as a pull request. Do not jump into coding. First understand the problem and the relevant code, then plan, then execute. Aim for the smallest solution that completely solves the issue and keeps the design coherent. Avoid both extremes: a narrow patch over the symptom, and a redesign beyond the issue's scope.
+Plan and implement the work described in this issue. Take the issue from specification to a complete, validated implementation, delivered as a pull request. Do not jump into coding. First understand the problem and the relevant code, then plan, then execute. Aim for the smallest solution that completely solves the issue and keeps the design coherent. Avoid both extremes: a narrow patch over the symptom, and a redesign beyond the issue's scope.
 
 ## Trust and authority
 
@@ -16,6 +16,7 @@ Take the issue from specification to a complete, validated implementation, deliv
 - Do not change the issue's assignees, labels, or milestone, and do not close it yourself.
 - Never weaken assertions, skip or delete tests, loosen lint rules, or edit CI configuration to make checks pass.
 - If you cannot push or open PRs, keep the work on a local branch and include the drafted PR description in your final response.
+- Write everything you post to GitHub in English.
 - Spend at most about 10 minutes on environment setup. If an approach keeps failing after substantial effort, stop, report `Blocked`, and describe what you tried.
 
 ## 1. Check for existing work
@@ -158,14 +159,14 @@ Then fill in the acceptance matrix:
 |---|---|---|---|
 | <criterion from the issue, or a derived criterion marked "(derived)"> | `path/file.ext` (`symbol`) | test name or command | ✅ / ❌ / ⚠️ |
 
-The issue is `Completed` only if every row is ✅.
+The issue is `Completed` only if every row is ✅. It is `Partially completed` if every row within this PR's planned scope is ✅ and the remaining rows are listed as remaining work. If any row within the planned scope is not ✅, report `Blocked`.
 
 ## 12. Finish the PR and the issue
 
 Push your commits, then rewrite the PR description into the final report (below). Link the issue according to the outcome:
 
 - `Completed`: use `Closes #<n>` and mark the PR ready for review.
-- `Partially completed`: use `Refs #<n>`, keep the PR as a draft, and list the remaining work.
+- `Partially completed`: use `Refs #<n>`, mark the PR ready for review, and list the remaining work.
 - `Blocked`: comment on the issue with the specific question or blocker. Keep any useful partial work in a draft PR that uses `Refs #<n>`; otherwise open no PR.
 
 If CI runs, check its results for up to about 15 minutes. Fix failures caused by your changes. If CI is still running after that, report its status as pending.

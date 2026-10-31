@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## 1. What This Repository Is
 
-A library of **prompt templates**, plus a playbook (`SOP.md`), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Nothing here is executed. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
+A library of **prompt templates**, plus a playbook (`SOP.md`), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Agents never run anything from this repository; the one script, `prompts/exec/fill.sh`, only fills placeholders for the human. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
 
 Every template serves at least one of two goals:
 
@@ -44,10 +44,12 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
     ├── 03-verify.md       # Starter: read-only review against independent evidence
     ├── 04-demo.md         # Starter: demo real, verified behavior
     └── exec/
-        ├── 01-implement.md  # Issue → validated draft/ready PR
+        ├── 01-implement.md  # Issue → validated PR (a draft only when Blocked)
         ├── 02-review.md     # One automated review submission on a PR
         ├── 03-fix.md        # Address review comments, resolve conflicts
-        └── 04-merge.md      # Merge, clean up, update issues, pick next from EPIC
+        ├── 04-merge.md      # Merge, clean up, update issues, pick next from EPIC
+        ├── fill.sh          # Fills {{...}} placeholders from environment variables
+        └── filled/          # fill.sh output; gitignored
 ```
 
 - Prompt template file names: `<NN>-<kebab-name>.md`, where `NN` is the step's order within its family.
@@ -117,12 +119,13 @@ The exec templates coordinate through markers, prefixes, and GitHub state. These
 
 | Contract | Written by | Read / relied on by |
 |---|---|---|
-| Review body starts with `<!-- automated-pr-review sha=<40-char-sha> -->` | 02-review | 02-review (duplicate check) |
+| Review body starts with `<!-- automated-pr-review sha=<40-char-sha> -->` | 02-review | 02-review (duplicate check), 04-merge (merge gate) |
+| Review body `**Verdict:**` line, in plain text: `Blocking issues found`, `Changes recommended before merge`, or `No blocking issues` | 02-review | 04-merge (merges only on `No blocking issues` for the current head) |
 | Inline comment starts with `<!-- automated-pr-review finding=<id> -->` | 02-review | 02-review (thread ownership), 03-fix (as reviewer comments) |
 | Reply prefix `[**AUTOFORGE**] ` | 03-fix | 03-fix (excludes its own replies), 02-review (treats replies as claims) |
 | Final report comment starts with `<!-- agent-address-review -->` | 03-fix | 03-fix (edit instead of re-post) |
 | Thread resolution: 03-fix resolves only `fixed`; 02-review resolves only its own verified Fixed/Withdrawn | 02-review, 03-fix | 04-merge (any unresolved thread blocks merge) |
-| `Closes #<n>` (complete) vs `Refs #<n>` (partial) | 01-implement | 04-merge (issue updates) |
+| `Closes #<n>` (complete) vs `Refs #<n>` (partial); either way the PR is ready for review, and only `Blocked` work stays a draft | 01-implement | 04-merge (issue updates; never merges a draft) |
 | Status words `Completed` / `Partially completed` / `Blocked` | 01-implement | Human readers |
 | Follow-up issue fields (problem, why deferred, direction, files, acceptance criteria, back-link) | 01-implement, 03-fix | Human readers |
 | EPIC roadmap and its status markers (🔄 ❓ ⛔) | Humans | 04-merge |
@@ -138,12 +141,17 @@ Each exec template repeats some shared rules so it works standalone. Keep these 
 - Record a baseline before changing code; compare final results against it.
 - Only claim checks actually run; say why anything was not run.
 - Justify every changed assertion in an existing test.
+- Write everything posted to GitHub in English.
 
 When you change one of these rules, search all of `prompts/exec/` and apply the same change.
 
 ### Configuration data
 
 Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in a clearly marked configuration section near the top of the template, separate from the procedure. Update data there without touching the logic.
+
+### Placeholders and `fill.sh`
+
+`prompts/exec/fill.sh` replaces each `{{NAME}}` with the environment variable `NAME` and writes the result to the gitignored `prompts/exec/filled/`. It finds placeholders by scanning the templates, so adding or renaming one needs no script change. Placeholder names must use only `A–Z`, `0–9`, and `_`, and a value used by several templates keeps the same name in all of them (for example `{{PR_URL}}`).
 
 ## 6. Making a Change
 
@@ -162,6 +170,7 @@ Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in
 - [ ] Code-changing templates require running checks and honest reporting
 - [ ] Human decisions have explicit stop points
 - [ ] Shared vocabulary (starter) and contracts / duplicated rules (exec) are consistent across files
+- [ ] Exec placeholder names use only `A–Z`, `0–9`, and `_`, and `prompts/exec/fill.sh -h` lists the expected ones
 
 ## 8. Don'ts
 
