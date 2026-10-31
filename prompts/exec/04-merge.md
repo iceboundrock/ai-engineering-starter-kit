@@ -42,7 +42,7 @@ Merge only if all of these hold. Otherwise, stop, change nothing, and report wha
 
 The latest automated review is the most recently submitted review by the automated reviewer (ignoring a `[bot]` suffix and letter case on the login) whose body begins with `<!-- automated-pr-review sha=<40-char-sha> -->`. Its SHA must equal the recorded head, and its `**Verdict:**` line must read `No blocking issues`. A verdict of `Changes recommended before merge` also stops the merge: accepting those findings is my decision.
 
-Nothing may have been posted to the PR after that review: no PR comment, no inline comment or thread reply, and no review with a non-empty body. The only exceptions are the automated reviewer's marker reviews and the inline comments they carry. Who posted it and what it says do not matter, and a post that looks harmless still stops the merge: deciding whether it matters is review work, so report it, and the next step is a new automated review.
+Nothing may have been posted to the PR after that review: no PR comment, no inline comment or thread reply, and no review with a non-empty body. The only exceptions are the automated reviewer's marker reviews and the inline comments they carry. A post with the same timestamp as the review counts as after it: GitHub timestamps have one-second precision, so they cannot show which came first. Who posted it and what it says do not matter, and a post that looks harmless still stops the merge: deciding whether it matters is review work, so report it, and the next step is a new automated review.
 
 Run the following, substituting the recorded head SHA. `--paginate` is required; without it only the first page is returned. If any command fails, do not merge. Merge only if `failures` is empty.
 
@@ -68,14 +68,14 @@ jq -n --arg bot '{{AUTOMATED_REVIEWER}}' --arg head '<head-sha>' \
       [ ( $reviews[] | select(.state != "PENDING")
           | select(.id | IN($marked_ids[]) | not)
           | select((.body // "") | test("\\S"))
-          | select(.submitted_at > $latest.submitted_at)
+          | select(.submitted_at >= $latest.submitted_at)
           | {kind: "review", author: .user.login, at: .submitted_at, url: .html_url} ),
         ( ($RC | add // [])[]
           | select(.pull_request_review_id | IN($marked_ids[]) | not)
-          | select(.created_at > $latest.submitted_at)
+          | select(.created_at >= $latest.submitted_at)
           | {kind: "review_comment", author: .user.login, at: .created_at, url: .html_url} ),
         ( ($IC | add // [])[]
-          | select(.created_at > $latest.submitted_at)
+          | select(.created_at >= $latest.submitted_at)
           | {kind: "issue_comment", author: .user.login, at: .created_at, url: .html_url} )
       ] | sort_by(.at) end) as $newer
   | {latest_review: (if $latest == null then null else {id: $latest.id, url: $latest.html_url, sha: $sha, verdict: $verdict} end),

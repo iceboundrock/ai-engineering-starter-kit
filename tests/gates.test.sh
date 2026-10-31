@@ -179,5 +179,24 @@ page reviews.json "$(rev 1 $BOT $T1 "$(clean | sed "s/sha=$HEAD_SHA/sha=${HEAD_S
 expect_merge "an abbreviated marker SHA is not a marker" $BOT "no automated review"
 expect_review "an abbreviated marker SHA" review
 
+# GitHub timestamps have one-second precision, so a post in the same second as the
+# review may have come after it. Both templates must treat it as later activity.
+new_case same-second-comment
+page reviews.json "$(rev 1 $BOT $T1 "$(clean)")"
+page issue_comments.json "$(ic 23 alice $T1)"
+expect_merge "a PR comment in the same second as the review blocks" $BOT "post(s)"
+expect_review "a PR comment in the same second as the review" re-review
+
+new_case same-second-review
+page reviews.json "$(rev 1 $BOT $T1 "$(clean)")" "$(rev 9 alice $T1 "High: y breaks")"
+expect_merge "a body-only review in the same second blocks" $BOT "post(s)"
+expect_review "a body-only review in the same second" re-review
+
+new_case same-second-reply
+page reviews.json "$(rev 1 $BOT $T1 "$(clean)")" "$(rev 12 alice $T1 "")"
+page review_comments.json "$(rc 13 alice $T1 12)"
+expect_merge "a thread reply in the same second blocks" $BOT "post(s)"
+expect_review "a thread reply in the same second" re-review
+
 echo "passed=$pass failed=$fail"
 [ "$fail" -eq 0 ]

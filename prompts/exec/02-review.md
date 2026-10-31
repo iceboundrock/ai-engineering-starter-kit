@@ -26,7 +26,7 @@ Do this before any review work, so you do not spend effort on a commit that is a
 3. **Earlier automated reviews and newer activity.** A commit counts as already reviewed only if both of these hold:
 
    - There is a submitted review, authored by your login, whose body *begins* with `<!-- automated-pr-review sha=<sha> -->`, where `<sha>` is that commit's full 40-character SHA. This is a *marker review*.
-   - Nothing was posted to the PR after the latest marker review for that commit. That means no PR comment, no inline comment or thread reply, and no review with a non-empty body. The only exceptions are marker reviews themselves and the inline comments they carry. Who posted it, what it says, and whether it looks substantive do not matter. Posts under your own login count too.
+   - Nothing was posted to the PR after the latest marker review for that commit. That means no PR comment, no inline comment or thread reply, and no review with a non-empty body. The only exceptions are marker reviews themselves and the inline comments they carry. A post with the same timestamp as the review counts as after it: GitHub timestamps have one-second precision, so they cannot show which came first. Who posted it, what it says, and whether it looks substantive do not matter. Posts under your own login count too.
 
    The SHA inside the marker is the only thing that says which commit a review covers. Run the following, substituting your login from step 1 and the head SHA from step 2. `--paginate` is required; without it only the first page is returned. Check that each command succeeded.
 
@@ -52,14 +52,14 @@ Do this before any review work, so you do not spend effort on a commit that is a
          [ ( $reviews[] | select(.state != "PENDING")
              | select(.id | IN($marked_ids[]) | not)
              | select((.body // "") | test("\\S"))
-             | select(.submitted_at > $cur.submitted_at)
+             | select(.submitted_at >= $cur.submitted_at)
              | {kind: "review", author: .user.login, at: .submitted_at, url: .html_url} ),
            ( ($RC | add // [])[]
              | select(.pull_request_review_id | IN($marked_ids[]) | not)
-             | select(.created_at > $cur.submitted_at)
+             | select(.created_at >= $cur.submitted_at)
              | {kind: "review_comment", author: .user.login, at: .created_at, url: .html_url} ),
            ( ($IC | add // [])[]
-             | select(.created_at > $cur.submitted_at)
+             | select(.created_at >= $cur.submitted_at)
              | {kind: "issue_comment", author: .user.login, at: .created_at, url: .html_url} )
          ] | sort_by(.at) end) as $newer
      | {decision: (if $cur == null then "review"
