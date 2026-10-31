@@ -17,10 +17,10 @@ Not goals: letting an agent finish a project unattended, maximizing automation (
 
 ## Files
 - `SOP.md`: the main line, from kickoff to demo. Start here.
-- `prompts/01-scope.md` (Claude Code, plan mode): convert the task into P0, acceptance oracles, and a first slice.
-- `prompts/02-build.md` (Claude Code): implement → execute → measure → fix, with a stall breaker.
-- `prompts/03-verify.md` (Codex): skeptical coverage and evidence review.
-- `prompts/04-demo.md` (Claude Code): truthful, reproducible demonstration.
+- `prompts/01-scope.md` (Claude Code, plan mode): check the agreed goal for gaps and propose acceptance checks, oracles, and a first slice; the human decides.
+- `prompts/02-build.md` (Claude Code): build one slice or fix accepted review findings: implement → execute → compare with the oracle, with a stall breaker.
+- `prompts/03-verify.md` (Codex): read-only review of a commit against independent evidence.
+- `prompts/04-demo.md` (Claude Code): a rehearsed demo of verified behavior, with scope frozen.
 - `prompts/exec/`: templates for ongoing work on GitHub, from issue to merge.
 - `templates/SCOPE.template.md`: starting point for `SCOPE.md`, the shared state between the team and the agents.
 - `templates/AGENTS.template.md`, `templates/CLAUDE.template.md`: optional engineering rules for the target repository, added only with the host team's permission.

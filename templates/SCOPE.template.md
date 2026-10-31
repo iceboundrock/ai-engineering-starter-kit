@@ -4,6 +4,7 @@ Shared state between the team and the agents. Update it after every decision and
 
 ## Goal
 
+- **Problem statement:** path, or paste it here
 - **User and outcome:**
 - **Inputs → observable outputs:**
 - **Demo:** format and time

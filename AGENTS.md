@@ -39,9 +39,9 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
 │   ├── AGENTS.template.md # Optional engineering rules for the target repository
 │   └── CLAUDE.template.md # Claude Code bridge to AGENTS.md
 └── prompts/
-    ├── 01-scope.md        # Starter: clarify goal, P0, success oracles; no code
+    ├── 01-scope.md        # Starter: find gaps, propose acceptance checks and oracles; human decides; no code
     ├── 02-build.md        # Starter: build one vertical slice with a bounded feedback loop
-    ├── 03-verify.md       # Starter: skeptical review against independent evidence
+    ├── 03-verify.md       # Starter: read-only review against independent evidence
     ├── 04-demo.md         # Starter: demo real, verified behavior
     └── exec/
         ├── 01-implement.md  # Issue → validated draft/ready PR
@@ -89,12 +89,14 @@ The human adds the problem statement and any context to a template and sends it 
 
 ### Shared vocabulary
 
-These terms are used across the four templates. Keep their meaning and spelling identical; if you change one, update every template.
+These terms are used across the four templates, `SOP.md`, and `templates/SCOPE.template.md`. Keep their meaning and spelling identical; if you change one, update every file that uses it.
 
 | Term | Meaning |
 |---|---|
 | P0 / P1 / P2 | Must-have / should-have / nice-to-have scope |
 | Oracle | Independent source of expected behavior: supplied expected output, hand-calculated reference, trusted baseline, invariant/property, or live end-to-end result |
+| Acceptance check | Observable check for a P0 requirement (command, fixture, or manual step), paired with an oracle |
+| Scope file | `SCOPE.md`, the shared state between the team and the agents; each template takes its path as `{{SCOPE_FILE}}` |
 | Vertical slice | Smallest end-to-end piece of behavior that can be run and checked |
 | PASS / FAIL / NOT VERIFIED | Result of a check, always with evidence |
 | BLOCKER / IMPORTANT / OPTIONAL | Severity of verify findings |

@@ -70,7 +70,7 @@ Say: “I plan to deliver [P0], using [assumptions]. We'll consider it successfu
 1. **Check the environment.** Both agents start in the repository, and the run and test commands work with output the agents can observe. Ask whether you may add `SCOPE.md` to the repository, and `AGENTS.md` and `CLAUDE.md` from `templates/` if they would help. If not, keep `SCOPE.md` outside the repository or gitignored. Never overwrite the host's own agent instructions.
 2. **Create `SCOPE.md`** from `templates/SCOPE.template.md` and fill in what step 1 agreed.
 3. **Send `01-scope`** to Claude Code in plan mode, so it cannot edit files. Say: “I'll have the agent check what we agreed for gaps. It proposes; we decide.”
-4. **Decide with the team.** Go through its questions and options aloud, choose, and record each choice in the Decisions table with who made it.
+4. **Decide with the team.** Go through its questions and options aloud and choose. Then confirm: the agent updates `SCOPE.md` with the agreed scope and records each decision with who made it.
 
 **Move on when** every P0 requirement in `SCOPE.md` has an acceptance check and an oracle, or a stated verification gap, and the first slice is chosen.
 
@@ -79,12 +79,12 @@ Say: “I plan to deliver [P0], using [assumptions]. We'll consider it successfu
 One slice at a time:
 
 1. **Say** which slice is next and how you will know it works.
-2. **Build:** send `02-build` to Claude Code.
+2. **Build:** send `02-build` to Claude Code, with the slice as its task.
 3. **Check the agent's work yourself.** Read the actual check output, not the agent's summary of it. Run `git diff --stat` and confirm that tests, fixtures, and expected outputs changed only where you agreed.
 4. **Commit** the slice once its check passes, so the review targets a fixed commit and you can roll back.
 5. **Verify:** send `03-verify` to Codex for that commit. Let the review finish before starting the next slice.
-6. **Triage the findings with the team.** Decide what to fix now, defer, or reject, record the decisions, and send the fixes back to Claude Code with `02-build`.
-7. **Update `SCOPE.md`:** slice status, evidence, and new decisions.
+6. **Triage the findings with the team.** Decide what to fix now, defer, or reject, and send the accepted findings to Claude Code as the `02-build` task.
+7. **Update `SCOPE.md`:** `02-build` fills in the slice and its check results; you add the commit, the review result, and the triage decisions.
 
 **When stuck:** after two attempts that don't improve the same failure, stop the agent and ask: “What is the biggest blocker to the next verified runnable milestone? Show the evidence, the smallest experiment, and what you need from me.” Then remove the blocker yourself, change the approach, or cut scope.
 
