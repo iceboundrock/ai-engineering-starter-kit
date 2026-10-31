@@ -13,8 +13,13 @@ dir=$(cd "$(dirname "$0")" && pwd)
 out="$dir/filled"
 token='[{][{]([A-Z0-9_]+)[}][}]'
 
+# placeholders <template>: its placeholder names, one per line. Returns 2 if the
+# template cannot be read; grep's "no match" status (1) is not an error.
 placeholders() {
-  { grep -oE '\{\{[A-Z0-9_]+\}\}' "$1" || true; } | sed 's/^{{//; s/}}$//' | sort -u
+  local found rc=0
+  found=$(grep -oE '\{\{[A-Z0-9_]+\}\}' "$1") || rc=$?
+  [ "$rc" -le 1 ] || return 2
+  [ -z "$found" ] || printf '%s\n' "$found" | sed 's/^{{//; s/}}$//' | sort -u
 }
 
 usage() {
@@ -32,9 +37,14 @@ Example:
 
 Placeholders by template:
 EOF
-  local f
+  local f names
   for f in "$dir"/[0-9][0-9]-*.md; do
-    printf '  %-14s %s\n' "$(basename "$f" .md)" "$(placeholders "$f" | tr '\n' ' ')"
+    if names=$(placeholders "$f" 2>/dev/null); then
+      names=$(printf '%s' "$names" | tr '\n' ' ')
+    else
+      names="(cannot read)"
+    fi
+    printf '  %-14s %s\n' "$(basename "$f" .md)" "$names"
   done
 }
 
@@ -59,11 +69,18 @@ discard() {
   fi
 }
 
-# fill returns 1 when variables are missing and 2 when the output cannot be written.
+# fill returns 1 when variables are missing, and 2 when the template cannot be read
+# or the output cannot be written.
 fill() {
-  local f=$1 name missing="" rest result="" match dest tmp
+  local f=$1 name names missing="" rest result="" match dest tmp
   dest="$out/$(basename "$f")"
-  for name in $(placeholders "$f"); do
+  if ! names=$(placeholders "$f") || ! rest=$(cat "$f" && printf x); then
+    echo "cannot read $(basename "$f")" >&2
+    discard "$dest"
+    return 2
+  fi
+  rest=${rest%x}
+  for name in $names; do
     [ -n "${!name:-}" ] || missing="$missing $name"
   done
   if [ -n "$missing" ]; then
@@ -71,8 +88,6 @@ fill() {
     discard "$dest"
     return 1
   fi
-  rest=$(cat "$f"; printf x)
-  rest=${rest%x}
   while [[ $rest =~ $token ]]; do
     match=${BASH_REMATCH[0]}
     name=${BASH_REMATCH[1]}

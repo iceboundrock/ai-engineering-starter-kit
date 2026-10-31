@@ -97,6 +97,27 @@ rc=$?
 [ $rc -eq 0 ] && grep -q '01-demo *AAA BBB' "$d/out" && grep -q '02-other *CCC' "$d/out"
 check "-h lists each template's variables" $? "rc=$rc out=$(cat "$d/out")"
 
+setup unreadable
+AAA=old BBB=value bash "$d/fill.sh" 01-demo >/dev/null 2>&1
+chmod 000 "$d/01-demo.md"
+if [ -r "$d/01-demo.md" ]; then
+  skip=$((skip + 1)) && echo "SKIP unreadable template (file still readable, probably running as root)"
+else
+  AAA=new BBB=value bash "$d/fill.sh" 01-demo >"$d/out" 2>&1
+  rc=$?
+  bash "$d/fill.sh" -h >"$d/help" 2>&1
+  [ $rc -ne 0 ] && ! grep -q "^$d/filled" "$d/out" && [ ! -e "$d/filled/01-demo.md" ] && grep -q '01-demo *(cannot read)' "$d/help"
+  check "an unreadable template fails, prints no path, and removes earlier output" $? "rc=$rc out=$(cat "$d/out") help=$(cat "$d/help")"
+fi
+chmod 644 "$d/01-demo.md"
+
+setup read-error-fill-all
+mkdir "$d/03-broken.md"
+AAA=1 BBB=2 CCC=3 bash "$d/fill.sh" >"$d/out" 2>"$d/err"
+rc=$?
+[ $rc -ne 0 ] && [ -e "$d/filled/01-demo.md" ] && ! grep -q 03-broken "$d/out" && [ ! -e "$d/filled/03-broken.md" ]
+check "fill-all fails when a template cannot be read" $? "rc=$rc out=$(cat "$d/out") err=$(cat "$d/err")"
+
 leftover=$(find "$work" -name '*.tmp.*' | head -1)
 [ -z "$leftover" ]
 check "no temporary files are left behind" $? "found $leftover"
