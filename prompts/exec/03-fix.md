@@ -5,7 +5,7 @@
 
 Address the review comments on this pull request, and resolve merge conflicts with its base branch if there are any.
 
-Your goal is not to make each comment disappear. Treat each comment as evidence of a concern, understand that concern, and resolve it in a way that leaves the codebase correct, coherent, and maintainable, while keeping your changes easy for the reviewer to re-review.
+Treat each comment as evidence of a concern, understand that concern, and resolve it in a way that leaves the codebase correct, coherent, and maintainable, while keeping your changes easy for the reviewer to re-review.
 
 ## Scope and inputs
 
@@ -56,7 +56,7 @@ For each in-scope comment, determine:
 - whether it requires a code change;
 - whether the reviewer's suggested solution is the best one, or merely points at a deeper issue.
 
-Do not follow a suggested implementation literally just because the reviewer wrote it. Understand the intent first, then choose the best solution.
+Do not adopt a suggested implementation just because the reviewer wrote it.
 
 Address comments in order of impact: correctness and security first, then API and design, then tests, then naming and style. Structural fixes often make smaller comments moot or change how they should be resolved.
 
@@ -90,7 +90,7 @@ For behavioral or correctness issues:
 - cover the important edge cases;
 - test observable behavior and invariants rather than implementation details.
 
-Change the assertions of an existing test only when the intended behavior has legitimately changed, and justify each such change in your final report. Tests should demonstrate why the fix is correct, not merely add coverage.
+Change the assertions of an existing test only when the intended behavior has legitimately changed, and justify each such change in your final report. Each new test should show why the fix is correct; do not add tests only for coverage.
 
 ## 7. Re-review, then validate
 
@@ -127,7 +127,7 @@ Resolve a thread only when you did what the reviewer asked. Everything else stay
 
 Review summary bodies and conversation comments have no thread to resolve. Answer their in-scope items that are not answered in a thread in a single PR conversation reply.
 
-**`no-change` replies** state how you understand the concern, why no change is needed, and the specific code, invariant, test, or design property that supports this. Be factual, not defensive.
+**`no-change` replies** state how you understand the concern, why no change is needed, and the specific code, invariant, test, or design property that supports this. Stay factual and avoid a defensive tone.
 
 **`follow-up` issues** are for problems that are real but outside this PR's reasonable scope, such as a larger migration or refactor. Never defer work that this PR needs in order to be correct. Before creating an issue, search for an existing one. Each issue includes:
 

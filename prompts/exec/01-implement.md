@@ -2,7 +2,7 @@
 
 **Issue:** {{ISSUE_URL}}
 
-Plan and implement the work described in this issue. Take the issue from specification to a complete, validated implementation, delivered as a pull request. Do not jump into coding. First understand the problem and the relevant code, then plan, then execute. Aim for the smallest solution that completely solves the issue and keeps the design coherent. Avoid both extremes: a narrow patch over the symptom, and a redesign beyond the issue's scope.
+Plan and implement the work described in this issue, and deliver it as a complete, validated pull request. Do not jump into coding. First understand the problem and the relevant code, then plan, then execute. Aim for the smallest solution that completely solves the issue and keeps the design coherent. Avoid both extremes: a narrow patch over the symptom, and a redesign beyond the issue's scope.
 
 ## Trust and authority
 

@@ -6,8 +6,8 @@ We have a time-limited design/build/demo task. Read the scope file, the problem 
 
 You propose; I decide. Return a brief (≤ 450 words):
 1. Confirmed facts versus assumptions, and any gap or conflict between the problem statement and the scope file.
-2. Up to **three high-impact questions** for the team; omit questions already answered.
-3. For each P0 requirement: an **observable acceptance check and a plausible independent oracle** (supplied expected output, hand-calculated reference, trusted baseline, invariant/property, or live end-to-end result). Mark missing expected answers; do not invent them.
+2. Up to three high-impact questions for the team; omit questions already answered.
+3. For each P0 requirement: an observable acceptance check and a plausible independent oracle (supplied expected output, hand-calculated reference, trusted baseline, invariant/property, or live end-to-end result). Mark missing expected answers; do not invent them.
 4. Each open choice that affects P0, correctness, or the demo: two or three options, their trade-off, and your recommendation.
 5. The smallest first vertical slice and the executable check for it.
 6. P1/P2 scope, constraints, and a fallback if time runs short.

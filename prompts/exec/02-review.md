@@ -2,7 +2,7 @@
 
 **PR:** {{PR_URL}}
 
-Perform a thorough technical review of this pull request, then publish the result as **one GitHub review submission**: a single review body plus inline comments anchored to specific diff lines. The only other change you may make to the PR is resolving review threads that you started earlier and have verified as addressed (sections 7 and 11). Nothing else should be posted to the PR.
+Review this pull request, then publish the result as **one GitHub review submission**: a single review body plus inline comments anchored to specific diff lines.
 
 ## Operating constraints
 
@@ -16,7 +16,7 @@ Perform a thorough technical review of this pull request, then publish the resul
 
 ## 0. Pre-flight
 
-Do this before any review work, so you do not spend effort on a commit that is already reviewed. The two ways to get this wrong are not equal: stopping wrongly leaves a commit or new discussion unreviewed and nobody notices, while continuing wrongly costs only a duplicate review. Stop only on the proof defined in step 3; in every other case, review.
+Do this before any review work, so you do not spend effort on a commit that is already reviewed. Stopping wrongly leaves a commit or new discussion unreviewed, and nobody notices; continuing wrongly costs only a duplicate review. Stop only on the proof defined in step 3; in every other case, review.
 
 1. **Your identity.** Determine your own GitHub login:
    `gh api graphql -f query='{viewer{login}}' --jq .data.viewer.login`
@@ -216,7 +216,7 @@ Never resolve or otherwise change threads started by anyone else, even if you be
 
 Re-read the entire diff once more. Look for interactions between changes, missed call sites, inconsistent treatment of similar paths, stale tests or docs, and accidental behavior changes.
 
-Then challenge each finding, including the ones you carry forward as Open: *Is this demonstrably a problem, and is the evidence strong enough to ask the author to act?* Remove weak or redundant findings, and do not inflate severity. Concluding that there are no blocking issues is a perfectly good outcome.
+Then challenge each finding, including the ones you carry forward as Open: *Is this demonstrably a problem, and is the evidence strong enough to ask the author to act?* Remove weak or redundant findings, and do not inflate severity. Concluding that there are no blocking issues is a good outcome.
 
 ## 9. Severity
 
@@ -291,7 +291,7 @@ In Earlier findings, when section 7 keeps the thread of a Fixed or Withdrawn fin
 
 Set the verdict as follows: **Blocking issues found** if there is any Blocker; **Changes recommended before merge** if there is any High; otherwise **No blocking issues**. Counts and verdict cover all current findings, including Open ones carried forward. Write the verdict on the Verdict line as plain text, exactly as given here: other tools read that line.
 
-If there are no findings, the Findings section reads: *No substantive correctness, safety, or maintainability issues were identified in the reviewed scope.*
+If there are no findings, the Findings section reads: *I found no substantive correctness, safety, or maintainability issues in the reviewed scope.*
 
 Permalinks take the form `https://github.com/<owner>/<repo>/blob/<head-sha>/<path>#L<line>` (or `#L<start>-L<end>` for a range).
 
