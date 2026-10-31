@@ -80,7 +80,7 @@ One slice at a time:
 
 1. **Say** which slice is next and how you will know it works.
 2. **Build:** send `02-build` to Claude Code, with the slice as its task.
-3. **Check the agent's work yourself.** Read the actual check output, not the agent's summary of it. Run `git diff --stat` and confirm that tests, fixtures, and expected outputs changed only where you agreed.
+3. **Check the agent's work yourself.** Read the actual check output, not the agent's summary of it. Run `git status` to see new and untracked files, then read `git diff` and every new test, fixture, or expected-output file, and confirm that they changed only where you agreed.
 4. **Commit** the slice once its check passes, so the review targets a fixed commit and you can roll back.
 5. **Verify:** send `03-verify` to Codex for that commit. Let the review finish before starting the next slice.
 6. **Triage the findings with the team.** Decide what to fix now, defer, or reject, and send the accepted findings to Claude Code as the `02-build` task.
