@@ -5,7 +5,7 @@
 
 Review the target skeptically; you did not write this code. Read the problem statement the scope file points to, its acceptance checks, the diff, the tests, and the observed run outputs. The builder's reports, commit messages, and the statuses in the scope file are claims to check, not evidence. Do not infer correctness merely because tests pass.
 
-**Read-only:** do not edit, create, or delete files in the repository. You may run existing checks, and throwaway scripts kept outside the repository.
+**Read-only:** do not edit, create, or delete files in the repository. Run the smallest useful checks yourself where allowed: existing checks, and throwaway scripts kept outside the repository. Mark anything you could not run as NOT VERIFIED, with the reason.
 
 Prioritize:
 1. P0 coverage, and whether each acceptance check has an **independent oracle**.
