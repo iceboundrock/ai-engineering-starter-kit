@@ -123,6 +123,7 @@ The exec templates coordinate through markers, prefixes, and GitHub state. These
 |---|---|---|
 | Review body starts with `<!-- automated-pr-review sha=<40-char-sha> -->` | 02-review | 02-review (duplicate check), 04-merge (merge gate) |
 | Review body `**Verdict:**` line, in plain text: `Blocking issues found`, `Changes recommended before merge`, or `No blocking issues` | 02-review | 04-merge (merges only on `No blocking issues` for the current head) |
+| "Nothing posted after the latest marker review": no PR comment, inline comment or reply, or review with a non-empty body, except marker reviews and their inline comments | 02-review, 04-merge (same definition in both) | 02-review (stops as already reviewed), 04-merge (merges only then) |
 | Inline comment starts with `<!-- automated-pr-review finding=<id> -->` | 02-review | 02-review (thread ownership), 03-fix (as reviewer comments) |
 | Prefix `[**AUTOFORGE**] ` on every 03-fix reply and comment except the final report | 03-fix | 03-fix (excludes its own posts; a thread whose latest comment has it is waiting on the reviewer), 02-review (treats replies as claims) |
 | Final report comment starts with `<!-- agent-address-review -->`; a new one each run, never edited | 03-fix | 03-fix (excludes it; the reviewer's review bodies and comments after the latest report are in scope) |

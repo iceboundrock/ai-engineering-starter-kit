@@ -34,7 +34,7 @@ Values are inserted literally. A template with any unset or empty variable is sk
 
 **A login does not prove authorship.** The author, the reviewer, and the fixer may post under one account. The templates therefore trust markers and the code, not the login, and treat every reply as a claim to verify.
 
-**Nothing is resolved on someone's word.** `03-fix` resolves only threads it fixed as asked. `02-review` re-checks its own resolved threads against the code and carries forward any finding that is still present. `04-merge` merges only when the latest automated review covers the current head and found no blocking issues, so a mistaken "fixed", or fix commits pushed after the last review, cannot reach the default branch unnoticed.
+**Nothing is resolved on someone's word.** `03-fix` resolves only threads it fixed as asked. `02-review` re-checks its own resolved threads against the code and carries forward any finding that is still present. `04-merge` merges only when the latest automated review covers the current head, found no blocking issues, and nothing was posted after it, and it pins the merge to that head with `--match-head-commit`. A mistaken "fixed", fix commits pushed after the last review, or a concern raised after it therefore cannot reach the default branch unnoticed. One gap remains: a comment posted in the moments between the check and the merge is not seen, and only branch protection can enforce review state at merge time.
 
 **The review only comments.** `02-review` never approves or requests changes. The merge decision, and any decision to accept a High finding, stays with people.
 
