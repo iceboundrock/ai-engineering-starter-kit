@@ -4,8 +4,9 @@
 # Each {{NAME}} is replaced with the value of the environment variable NAME,
 # and the result is written to filled/ next to this script (git ignores it).
 # Values are inserted literally, in one pass, so a value is never substituted again.
-# A template with any unset or empty variable is skipped, never half-filled, and
-# its output from an earlier run is removed so it cannot be mistaken for this one.
+# A template with any unset or empty variable is skipped, never half-filled. A
+# skipped template, or one that cannot be read or written, has its output from an
+# earlier run removed so it cannot be mistaken for this one.
 
 set -euo pipefail
 
@@ -28,9 +29,10 @@ Usage: fill.sh [-h] [TEMPLATE...]
 
 TEMPLATE is a template name such as 03-fix, 03-fix.md, or 03. With no
 TEMPLATE, every template whose variables are all set is filled and the rest
-are skipped. A template that is skipped or fails to write loses its output
-from any earlier run. The exit status is non-zero if any write fails, if a
-named template is skipped, or if nothing is filled.
+are skipped. A template that is skipped, or cannot be read or written, loses
+its output from any earlier run. The exit status is non-zero if any template
+cannot be read or written, if a named template is skipped, or if nothing is
+filled.
 
 Example:
   PR_URL=https://github.com/<owner>/<repo>/pull/<n> REVIEWER=<login> ./fill.sh 03-fix
