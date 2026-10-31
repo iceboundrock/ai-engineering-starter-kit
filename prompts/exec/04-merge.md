@@ -40,14 +40,16 @@ Merge only if all of these hold. Otherwise, stop, change nothing, and report wha
 
 ## 2. Merge
 
-Use the repository's merge method. If only one is allowed, use it; if several are allowed, use squash (for example, `gh pr merge <number> --squash`). Never use `--admin`.
+Use the repository's merge method. If only one is allowed, use it; if several are allowed, use squash. Never use `--admin`.
+
+When squashing, write the commit message yourself instead of accepting GitHub's default, which concatenates every commit on the branch: the PR title and number as the subject, and a few lines on what changed and why as the body (for example, `gh pr merge <number> --squash --subject "<title> (#<number>)" --body "<body>"`). Leave out the list of branch commits and any AI attribution or session trailers; keep `Co-authored-by` trailers that name people.
 
 Record the merge commit SHA. If the merge fails, stop.
 
 ## 3. Clean up
 
 - Run `git fetch --prune`. Then fast-forward the local default branch to `origin/<default>` with `--ff-only`. If it has diverged, do not reset it; report it.
-- Delete the PR's branch on the remote (unless GitHub already deleted it) and locally. After a squash merge, `git branch -d` refuses to delete the branch. Use `-D` only after confirming that the local branch's tip is the PR's merged head commit, so no unpushed work is lost.
+- Delete the PR's branch on the remote (unless GitHub already deleted it, or the PR came from a fork) and locally. After a squash merge, `git branch -d` refuses to delete the branch. Use `-D` only after confirming that the local branch's tip is the PR's merged head commit, so no unpushed work is lost.
 - For other local branches, delete only those whose PR is merged and whose tip matches that PR's head commit. Leave everything else.
 - Remove only clean worktrees whose branch you just deleted. Never use `--force`. Never touch a worktree that has uncommitted changes or that may belong to another running session.
 - If any cleanup step fails, report it and continue with the remaining steps.
@@ -62,11 +64,11 @@ Find the issues this PR references, excluding the EPIC.
 
 ## 5. Pick the next issue (read-only)
 
-Read the EPIC's work queue and apply what just happened. Issues closed by this merge are done, and rows that were blocked only by them are now ready.
+Read the EPIC's work queue and its status legend, and apply what just happened. Issues closed by this merge are done, and rows that were blocked only by them are now ready. The usual markers are 🔄 in progress, 🟢 ready, ⛔ blocked, ❓ a decision for me, ✅ a decision already made, and ◻️ conditional; where the EPIC's legend differs, follow the legend.
 
-Take the first row that is neither done nor blocked:
+Take the first row that is not done (its issue is closed, or it is ✅), not blocked (⛔ with a dependency still open), and not waiting on an unmet condition (◻️):
 
-- If it is 🔄 in progress, the next step is finishing that PR.
+- If it is 🔄 in progress, the next step is finishing that work.
 - If it is ❓ a decision, the next step is that decision.
 - Otherwise, confirm that the issue is still open and still needed. Check the comments added since the roadmap was last updated.
 
@@ -76,7 +78,7 @@ Do not start implementing, create branches, or assign anything.
 
 Answer yes or no, with reasons. The EPIC needs updating if any of these hold:
 
-- issues closed by this merge are not shown as done;
+- issues closed by this merge still appear in the queue as open work;
 - a row's status is stale (for example, it is still ⛔ although its dependency is now closed);
 - open issues exist that are not in the roadmap;
 - the merge made another issue obsolete, satisfied it, or changed a dependency;

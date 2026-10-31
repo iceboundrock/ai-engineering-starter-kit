@@ -21,7 +21,7 @@ Not goals: letting an agent finish a project unattended, maximizing automation (
 - `prompts/02-build.md` (Claude Code): build one slice or fix accepted review findings: implement → execute → compare with the oracle, with a stall breaker.
 - `prompts/03-verify.md` (Codex): read-only review of a commit against independent evidence.
 - `prompts/04-demo.md` (Claude Code): a rehearsed demo of verified behavior, with scope frozen.
-- `prompts/exec/`: templates for ongoing work on GitHub, from issue to merge.
+- `prompts/exec/`: templates for ongoing work on GitHub, from issue to merge. Its README explains the flow and the design decisions.
 - `prompts/exec/fill.sh`: fills the exec templates' `{{...}}` placeholders from environment variables into the gitignored `prompts/exec/filled/`. Run it with `-h` to see each template's variables.
 - `templates/SCOPE.template.md`: starting point for `SCOPE.md`, the shared state between the team and the agents.
 - `templates/AGENTS.template.md`, `templates/CLAUDE.template.md`: optional engineering rules for the target repository, added only with the host team's permission.

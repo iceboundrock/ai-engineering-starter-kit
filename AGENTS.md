@@ -44,6 +44,7 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
     ├── 03-verify.md       # Starter: read-only review against independent evidence
     ├── 04-demo.md         # Starter: demo real, verified behavior
     └── exec/
+        ├── README.md        # The exec flow and why it is designed this way
         ├── 01-implement.md  # Issue → validated PR (a draft only when Blocked)
         ├── 02-review.md     # One automated review submission on a PR
         ├── 03-fix.md        # Address review comments, resolve conflicts
@@ -122,13 +123,14 @@ The exec templates coordinate through markers, prefixes, and GitHub state. These
 | Review body starts with `<!-- automated-pr-review sha=<40-char-sha> -->` | 02-review | 02-review (duplicate check), 04-merge (merge gate) |
 | Review body `**Verdict:**` line, in plain text: `Blocking issues found`, `Changes recommended before merge`, or `No blocking issues` | 02-review | 04-merge (merges only on `No blocking issues` for the current head) |
 | Inline comment starts with `<!-- automated-pr-review finding=<id> -->` | 02-review | 02-review (thread ownership), 03-fix (as reviewer comments) |
-| Reply prefix `[**AUTOFORGE**] ` | 03-fix | 03-fix (excludes its own replies), 02-review (treats replies as claims) |
-| Final report comment starts with `<!-- agent-address-review -->` | 03-fix | 03-fix (edit instead of re-post) |
+| Prefix `[**AUTOFORGE**] ` on every 03-fix reply and comment except the final report | 03-fix | 03-fix (excludes its own posts; a thread whose latest comment has it is waiting on the reviewer), 02-review (treats replies as claims) |
+| Final report comment starts with `<!-- agent-address-review -->`; a new one each run, never edited | 03-fix | 03-fix (excludes it; the reviewer's review bodies and comments after the latest report are in scope) |
+| PR description starts with `<!-- agent-implement issue=<n> -->` | 01-implement | 01-implement (resumes its own draft PR instead of stopping) |
 | Thread resolution: 03-fix resolves only `fixed`; 02-review resolves only its own verified Fixed/Withdrawn | 02-review, 03-fix | 04-merge (any unresolved thread blocks merge) |
 | `Closes #<n>` (complete) vs `Refs #<n>` (partial); either way the PR is ready for review, and only `Blocked` work stays a draft | 01-implement | 04-merge (issue updates; never merges a draft) |
 | Status words `Completed` / `Partially completed` / `Blocked` | 01-implement | Human readers |
 | Follow-up issue fields (problem, why deferred, direction, files, acceptance criteria, back-link) | 01-implement, 03-fix | Human readers |
-| EPIC roadmap and its status markers (🔄 ❓ ⛔) | Humans | 04-merge |
+| EPIC roadmap and its status markers (🔄 🟢 ⛔ ❓ ✅ ◻️; the EPIC's own legend wins) | Humans | 04-merge |
 
 ### Rules duplicated on purpose
 

@@ -39,10 +39,11 @@ Do this before any review work, so you do not spend effort on a commit that is a
      --slurpfile R reviews.json --slurpfile RC review_comments.json --slurpfile IC issue_comments.json '
      def login: (.user.login // "") | sub("\\[bot\\]$"; "");
      def marker_sha: (.body // "")
-       | capture("^\\s*<!-- automated-pr-review sha=(?<sha>[0-9a-fA-F]{40}) -->") | .sha | ascii_downcase;
+       | (capture("^\\s*<!-- automated-pr-review sha=(?<sha>[0-9a-fA-F]{40}) -->") | .sha | ascii_downcase) // null;
      ($R | add // []) as $reviews
      | [ $reviews[] | select(.state != "PENDING") | select(login == $me)
-         | {id, html_url, submitted_at, marker_sha: marker_sha} ] as $marked
+         | {id, html_url, submitted_at, marker_sha: marker_sha}
+         | select(.marker_sha != null) ] as $marked
      | ($marked | map(.id)) as $marked_ids
      | ($marked | map(select(.marker_sha == ($head | ascii_downcase)))
                 | sort_by(.submitted_at) | last) as $cur
@@ -99,13 +100,18 @@ Do this before any review work, so you do not spend effort on a commit that is a
            nodes {
              id isResolved isOutdated viewerCanResolve path line originalLine
              resolvedBy { login }
-             comments(first:50) { nodes { author { login } body url createdAt } }
+             comments(first:100) {
+               pageInfo { hasNextPage endCursor }
+               nodes { author { login } body url createdAt }
+             }
            }
          }
        }
      }
    }'
    ```
+
+   If a thread's `comments.pageInfo.hasNextPage` is true, fetch its remaining comments with a `node(id: <thread id>)` query on `PullRequestReviewThread.comments(after: <endCursor>)` before judging its replies.
 
    *Your threads* are those whose first comment is authored by you and starts with a finding marker `<!-- automated-pr-review finding=<id> -->`. A thread your login started without that marker is not yours. No reply in a thread is yours either, even one posted under your login, since you never reply to threads; section 7 says how to treat replies. Keep your threads for section 7.
 
@@ -227,7 +233,7 @@ Write in English. Keep the HTML markers exactly as specified below. Be direct an
 
 ### Finding IDs
 
-Give every finding a stable ID: a short kebab-case slug of its title (for example `unchecked-null-config`). A finding carried forward from an earlier review keeps its original ID, so later runs can match it to its thread.
+Give every finding a stable ID: a short kebab-case slug of its title (for example `unchecked-null-config`). If two findings would get the same ID, add a numeric suffix (`-2`). A finding carried forward from an earlier review keeps its original ID, so later runs can match it to its thread.
 
 ### Review body
 
@@ -327,7 +333,7 @@ gh api repos/<owner>/<repo>/pulls/<number>/reviews --method POST --input review.
 
 If the request fails:
 
-- On a 422 caused by an inline comment targeting a line outside the diff, first confirm that no review was created: rerun the section 0 step 3 commands. If `current_head_review.id` differs from the one recorded in pre-flight (or is non-null when pre-flight had none), a review was created. Otherwise, move that comment's content into the body and resubmit once.
+- On a 422 caused by an inline comment targeting a line outside the diff, first confirm that no review was created: rerun the section 0 step 3 commands. If `current_head_review.id` differs from the one recorded in pre-flight (or is non-null when pre-flight had none), a review was created: do not resubmit, and continue with step 4 using that review. Otherwise, move that comment's content into the body and resubmit once.
 - For any other failure, or if the retry fails, do not try another posting method, and do not fall back to a plain PR comment. Output the complete review body and inline comments in your final response instead.
 
 4. **Resolve verified threads.** Only after the review has been created, resolve each thread the body lists as Fixed or Withdrawn, except those marked *thread left open*, and only if it is still unresolved and its `viewerCanResolve` is true:
