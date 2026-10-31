@@ -30,6 +30,7 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
 .
 ├── AGENTS.md              # This guide, for agents maintaining the repository
 ├── CLAUDE.md              # Claude Code bridge to this guide
+├── LICENSE                # MIT
 ├── README.md              # Purpose and file map
 ├── SOP.md                 # Main line: clarify → scope → build ⇄ verify → checkpoints → demo
 ├── docs/

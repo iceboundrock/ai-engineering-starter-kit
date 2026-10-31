@@ -38,3 +38,7 @@ Not goals: letting an agent finish a project unattended, maximizing automation (
 - No indefinite loops, large agent fleets, or infrastructure provisioning in a timeboxed session.
 - Prefer a verified end-to-end P0 over optimizations of weak or self-referential metrics.
 - If verification cannot be automated, explain the residual human judgment needed.
+
+## License
+
+MIT; see `LICENSE`.
