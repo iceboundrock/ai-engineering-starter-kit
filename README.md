@@ -1,6 +1,19 @@
-# Timeboxed AI Engineering Kit — v2
+# AI Engineering Starter Kit
 
-Lightweight, tool-agnostic instructions for a five-hour collaborative design/build/demo task. Inspired by the *verifiable goals and remove blockers* insights from the user-supplied interview transcript, **not** by its long-running multi-agent or compute-intensive setup.
+Prompt templates and a playbook for getting an AI-assisted software project off the ground quickly, with engineering discipline.
+
+## Purpose
+
+Coding agents make code cheap to produce, and unverified claims about that code just as cheap. This kit keeps the decisions with the people who own the problem and makes the agent back every claim with evidence. It targets the first hours of a project, when the goal is still being clarified and there is little time to lose:
+
+- **Problem first:** clarify the goal with the people who own it, agree on an independent oracle, cut a P0, and make trade-offs explicit.
+- **Agents with limits:** give the agent context and boundaries, require it to run checks rather than describe them, guard against its typical failures (claimed-but-unrun checks, edited expectations, scope creep, loops), and stop it when it stalls.
+
+Claude Code plans and builds; Codex reviews, so the review comes from a different model with a separate context. The two share state only through `SCOPE.md`. Nothing needs to be installed beyond the agents themselves, so the kit works in a repository and environment you don't own. Every prompt is short enough for a pairing partner to read over your shoulder, and every rule in it has a reason you can explain.
+
+`SOP.md` is the main line; each prompt in `prompts/` is used at one step of it. `prompts/exec/` holds the templates for ongoing work on GitHub (issue → PR → review → fix → merge); the short prompts condense ideas from them.
+
+Not goals: letting an agent finish a project unattended, maximizing automation (agent fleets, long unattended loops), or storing project-specific problems, code, or data.
 
 ## Files
 - `SOP-01-clarify.md`: human/team conversation for the first 20 minutes.
@@ -25,9 +38,9 @@ Lightweight, tool-agnostic instructions for a five-hour collaborative design/bui
 - API: contract example, valid/invalid response checks, idempotency under retry where required.
 - Interactive UI: user flow actually exercised, critical state transitions, fallback CLI output.
 
-## Interview-specific constraints
+## Working in a host environment
 - Do **not** install third-party skills, extra services, or transmit confidential material without permission.
-- No indefinite `/goal` loops, large agent fleets, or infrastructure provisioning for a five-hour exercise.
+- No indefinite loops, large agent fleets, or infrastructure provisioning in a timeboxed session.
 - Prefer a verified end-to-end P0 over optimizations of weak or self-referential metrics.
 - If verification cannot be automated, explain the residual human judgment needed.
 

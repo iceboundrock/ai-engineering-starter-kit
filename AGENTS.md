@@ -4,16 +4,25 @@ Guidance for AI coding agents working in this repository.
 
 ## 1. What This Repository Is
 
-A library of **prompt templates** for coding agents (Claude Code, Codex, Cursor, etc.). Nothing here is executed. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository.
+A library of **prompt templates**, plus a playbook (SOP), for getting an AI-assisted software project off the ground quickly, with engineering discipline. Nothing here is executed. People copy a template, add their own context, and hand it to a coding agent working in a *different* repository, often one they don't own.
+
+Every template serves at least one of two goals:
+
+- **Problem first:** the human clarifies the goal with the people who own it, agrees on an independent oracle, cuts a P0, and makes trade-offs explicit. Agents propose options and gather evidence; humans decide.
+- **Agents with limits:** agents get context and boundaries, run checks instead of describing them, and are guarded against their typical failures: claimed-but-unrun checks, edited expectations, scope creep, and loops.
+
+Templates have two readers: the agent that executes them, and the people working alongside the human, who often read each prompt as it is sent. Keep prompts short, and make every rule one the human can explain.
 
 There are two template families:
 
 | Family | Location | Used for | Style |
 |---|---|---|---|
-| **Interview** | `prompts/*.md` | AI coding interviews (~5 hours): scope → build → verify → demo | Short, general, low ceremony |
-| **Exec** | `prompts/exec/*.md` | Real project work on GitHub: issue → PR → review → fix → merge | Long, rigorous, explicit rules |
+| **Starter** | `prompts/*.md` | The first hours of a project (the examples assume about five hours): scope → build → verify → demo | Short, general, low ceremony |
+| **Exec** | `prompts/exec/*.md` | Ongoing project work on GitHub: issue → PR → review → fix → merge | Long, rigorous, explicit rules |
 
-Your job here is to write, edit, and keep these templates consistent. Do not add application code, real interview problems, or solutions.
+The starter templates condense ideas from the exec ones: `01-scope` and `02-build` from `exec/01-implement`, and `03-verify` from `exec/02-review`. When you change an exec rule that has a condensed counterpart, check whether the starter template should change too.
+
+Your job here is to write, edit, and keep these templates consistent. Do not add application code, solutions, or project-specific problems, code, or data.
 
 ## 2. Layout
 
@@ -21,10 +30,10 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
 .
 ├── AGENTS.md
 └── prompts/
-    ├── 01-scope.md        # Interview: clarify goal, P0, success oracles; no code
-    ├── 02-build.md        # Interview: build one vertical slice with a bounded feedback loop
-    ├── 03-verify.md       # Interview: skeptical review against independent evidence
-    ├── 04-demo.md         # Interview: demo real, verified behavior
+    ├── 01-scope.md        # Starter: clarify goal, P0, success oracles; no code
+    ├── 02-build.md        # Starter: build one vertical slice with a bounded feedback loop
+    ├── 03-verify.md       # Starter: skeptical review against independent evidence
+    ├── 04-demo.md         # Starter: demo real, verified behavior
     └── exec/
         ├── 01-implement.md  # Issue → validated draft/ready PR
         ├── 02-review.md     # One automated review submission on a PR
@@ -45,13 +54,13 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
   - Never mix the two styles for the same value, and never leave instance-specific values (a real PR URL, a username) hard-coded in the body.
 - **Verification honesty:** every template that changes code must require the agent to actually run checks and to report only checks it ran. Never write a template that allows skipping, deleting, or weakening tests to get a pass.
 - **Stop points:** where a decision belongs to a human (consequential ambiguity, public API or product choice, irreversible action), the template must tell the agent to stop and ask instead of guessing.
-- **Tool-agnostic where possible:** interview templates must not depend on any specific agent product, language, or hosting service. Exec templates may assume `git`, `gh`, and GitHub.
+- **Tools:** starter templates are written for Claude Code (scope, build, demo) and Codex (verify). Each prompt must still work with nothing installed beyond the agent: assume no hooks, no custom commands, and no `AGENTS.md` or `CLAUDE.md` in the target repository. How to operate the tools (plan mode, which agent receives which prompt, manual checks between steps) belongs in the SOP, not in the prompts. Starter templates must not depend on a specific language or hosting service. Exec templates may assume `git`, `gh`, and GitHub.
 
-## 4. Interview Templates (`prompts/*.md`)
+## 4. Starter Templates (`prompts/*.md`)
 
 ### Purpose and flow
 
-A candidate adds the interview problem and any context to a template and sends it to their coding agent. The four templates form a loop over a ~5-hour session:
+The human adds the problem statement and any context to a template and sends it to their coding agent. The four templates form a loop over a timeboxed session (about five hours in the examples):
 
 ```
 01-scope ──► 02-build ⇄ 03-verify ──► 04-demo
@@ -61,9 +70,9 @@ A candidate adds the interview problem and any context to a template and sends i
 
 ### Rules
 
-1. **Short.** Aim for ≤ 250 words of prompt body; hard cap 300. A candidate must be able to read and send it in about a minute.
+1. **Short.** Aim for ≤ 250 words of prompt body; hard cap 300. Reading and sending it must take about a minute.
 2. **One job per template.** Don't merge phases.
-3. **No problem-specific content.** The candidate supplies the problem; templates refer to it generically ("the problem statement").
+3. **No problem-specific content.** The human supplies the problem; templates refer to it generically ("the problem statement").
 4. **Bounded agent behavior.** Keep the existing limits: no unapproved dependencies or outside services, no broad refactors, no parallel agent fleets, no indefinite loops, and the two-attempt unblock protocol in `02-build`.
 5. **Evidence over claims.** Results are reported as PASS / FAIL / NOT VERIFIED with evidence. Expected outputs come from an independent oracle, never from the current implementation.
 
@@ -134,17 +143,17 @@ Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in
 ## 7. Checklist
 
 - [ ] File name is `<NN>-<kebab-name>.md` and the title matches
-- [ ] Interview templates: prompt body ≤ 300 words (target ≤ 250)
+- [ ] Starter templates: prompt body ≤ 300 words (target ≤ 250)
 - [ ] No hard-coded instance values (URLs, usernames) outside a configuration section
 - [ ] `{{...}}` for human-filled, `<...>` for agent-filled placeholders; human placeholders listed at the top
 - [ ] Code-changing templates require running checks and honest reporting
 - [ ] Human decisions have explicit stop points
-- [ ] Shared vocabulary (interview) and contracts / duplicated rules (exec) are consistent across files
+- [ ] Shared vocabulary (starter) and contracts / duplicated rules (exec) are consistent across files
 
 ## 8. Don'ts
 
-- Don't add real interview problems, solutions, secrets, or tokens.
-- Don't turn interview templates into exec-style procedures; borrow ideas only in condensed form.
+- Don't add solutions, secrets, tokens, or project-specific problems, code, or data.
+- Don't turn starter templates into exec-style procedures; borrow ideas only in condensed form.
 - Don't change a marker, prefix, or status word in one exec template without updating the others.
 - Don't write templates that let the agent claim success without evidence.
 
