@@ -67,10 +67,10 @@ Say: “I plan to deliver [P0], using [assumptions]. We'll consider it successfu
 
 ## 2. Set up and scope (20–35 min)
 
-1. **Check the environment.** Both agents start in the repository, and the run and test commands work with output the agents can observe. Ask whether you may add `SCOPE.md` to the repository, and `AGENTS.md` and `CLAUDE.md` from `templates/` if they would help. If not, keep `SCOPE.md` outside the repository or gitignored. Never overwrite the host's own agent instructions.
+1. **Check the environment.** Confirm that both agents start in the repository and that the run and test commands work, with output the agents can observe. Ask whether you may add `SCOPE.md` to the repository, and `AGENTS.md` and `CLAUDE.md` from `templates/` if they would help. If not, keep `SCOPE.md` outside the repository or gitignored. Never overwrite the host's own agent instructions.
 2. **Create `SCOPE.md`** from `templates/SCOPE.template.md` and fill in what step 1 agreed.
 3. **Send `01-scope`** to Claude Code in plan mode, so it cannot edit files. Say: “I'll have the agent check what we agreed for gaps. It proposes; we decide.”
-4. **Decide with the team.** Go through its questions and options aloud and choose. Then confirm: the agent updates `SCOPE.md` with the agreed scope and records each decision with who made it.
+4. **Decide with the team.** Go through its questions and options aloud and choose. Then tell the agent what you chose; it updates `SCOPE.md` with the agreed scope and records each decision with who made it.
 
 **Move on when** every P0 requirement in `SCOPE.md` has an acceptance check and an oracle, or a stated verification gap, and the first slice is chosen.
 
