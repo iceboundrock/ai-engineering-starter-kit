@@ -44,16 +44,16 @@ The latest automated review is the most recently submitted review by the automat
 
 Nothing may have been posted to the PR after that review: no PR comment, no inline comment or thread reply, and no review with a non-empty body. The only exceptions are the automated reviewer's marker reviews and the inline comments they carry. Who posted it and what it says do not matter, and a post that looks harmless still stops the merge: deciding whether it matters is review work, so report it, and the next step is a new automated review.
 
-Run the following, substituting the automated reviewer's login and the recorded head SHA. `--paginate` is required; without it only the first page is returned. If any command fails, do not merge. Merge only if `failures` is empty.
+Run the following, substituting the recorded head SHA. `--paginate` is required; without it only the first page is returned. If any command fails, do not merge. Merge only if `failures` is empty.
 
 ```bash
 gh api --paginate repos/<owner>/<repo>/pulls/<number>/reviews  > reviews.json
 gh api --paginate repos/<owner>/<repo>/pulls/<number>/comments > review_comments.json
 gh api --paginate repos/<owner>/<repo>/issues/<number>/comments > issue_comments.json
 
-jq -n --arg bot '<automated-reviewer>' --arg head '<head-sha>' \
+jq -n --arg bot '{{AUTOMATED_REVIEWER}}' --arg head '<head-sha>' \
   --slurpfile R reviews.json --slurpfile RC review_comments.json --slurpfile IC issue_comments.json '
-  def norm: sub("\\[bot\\]$"; "") | ascii_downcase;
+  def norm: ltrimstr("@") | sub("\\[bot\\]$"; "") | ascii_downcase;
   def marker_sha: (.body // "")
     | (capture("^\\s*<!-- automated-pr-review sha=(?<sha>[0-9a-fA-F]{40}) -->") | .sha | ascii_downcase) // null;
   ($R | add // []) as $reviews
