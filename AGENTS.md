@@ -37,7 +37,7 @@ Your job here is to write, edit, and keep these templates consistent. Do not add
 │   └── non-code-rules.md  # Writing rules for issues, PRs, and other non-code artifacts
 ├── tests/
 │   ├── fill.test.sh       # Regression tests for fill.sh
-│   └── gates.test.sh      # Regression tests for the jq checks in 02-review and 04-merge
+│   └── gates.test.sh      # Regression tests for the review-state checks in 02-review and 04-merge
 ├── templates/
 │   ├── SCOPE.template.md  # Shared state between the team and the agents
 │   ├── AGENTS.template.md # Optional engineering rules for the target repository
@@ -149,6 +149,7 @@ Each exec template repeats some shared rules so it works standalone. Keep these 
 - Only claim checks actually run; say why anything was not run.
 - Justify every changed assertion in an existing test.
 - Write everything posted to GitHub in English.
+- Put local scratch files (API responses, request payloads) in a new `mktemp -d` directory, never in the target repository's working tree.
 
 When you change one of these rules, search all of `prompts/exec/` and apply the same change.
 
@@ -162,7 +163,7 @@ Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in
 
 ### Tests
 
-`tests/` holds deterministic tests on synthetic inputs; they need only bash and jq, and never touch GitHub. `tests/gates.test.sh` runs the jq programs extracted from the templates: the first `bash` block after `## 0. Pre-flight` in 02-review and after `## 1. Check before merging` in 04-merge. Keep those headings and blocks in place, or update the test with them.
+`tests/` holds deterministic tests on synthetic inputs; they need only bash and jq, and never touch GitHub. `tests/gates.test.sh` runs the first `bash` block after `## 0. Pre-flight` in 02-review and after `## 1. Check before merging` in 04-merge, with a stub `gh` that serves synthetic API output, and fails if a block changes files in its working directory or leaves any behind. Keep those headings and blocks in place, or update the test with them.
 
 ## 6. Making a Change
 
@@ -182,7 +183,7 @@ Instance-specific data (such as the EPIC lookup table in `04-merge.md`) lives in
 - [ ] Human decisions have explicit stop points
 - [ ] Shared vocabulary (starter) and contracts / duplicated rules (exec) are consistent across files
 - [ ] Exec placeholder names use only `A–Z`, `0–9`, and `_`, and `prompts/exec/fill.sh -h` lists the expected ones
-- [ ] If you changed `fill.sh` or a jq check in 02-review or 04-merge: `bash tests/fill.test.sh` and `bash tests/gates.test.sh` pass, with a case for the changed behavior
+- [ ] If you changed `fill.sh` or a check block in 02-review or 04-merge: `bash tests/fill.test.sh` and `bash tests/gates.test.sh` pass, with a case for the changed behavior
 
 ## 8. Don'ts
 

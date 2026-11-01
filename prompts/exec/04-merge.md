@@ -5,7 +5,7 @@
 
 Merge this PR. Then clean up the local branches and worktrees it leaves behind, and update the issues it relates to. Finally, tell me which issue to work on next according to the EPIC's roadmap, and whether the roadmap needs updating.
 
-Steps 2–4 change things. Steps 1, 5, and 6 are read-only.
+Steps 2–4 change things. Steps 1, 5, and 6 are read-only, locally too: put any file you need to write, such as API responses, in a new directory from `mktemp -d`, never in the repository's working tree, where it could overwrite a file of the same name.
 
 If the merge does not happen, stop after reporting why. If a later step fails, report the failure and continue with the steps that do not depend on it.
 
@@ -44,15 +44,15 @@ The latest automated review is the most recently submitted review by the automat
 
 Nothing may have been posted to the PR after that review: no PR comment, no inline comment or thread reply, and no review with a non-empty body. The only exceptions are the automated reviewer's marker reviews and the inline comments they carry. A post with the same timestamp as the review counts as after it: GitHub timestamps have one-second precision, so they cannot show which came first. Who posted it and what it says do not matter, and a post that looks harmless still stops the merge: deciding whether it matters is review work, so report it, and the next step is a new automated review.
 
-Run the following, substituting the recorded head SHA. `--paginate` is required; without it only the first page is returned. If any command fails, do not merge. Merge only if `failures` is empty.
+Run the following as a single command, substituting the recorded head SHA. It keeps the API responses in a new temporary directory outside the working tree and removes that directory afterwards. `--paginate` is required; without it only the first page is returned. If any command fails, the output is `GATE NOT RUN` instead of the result: do not merge. Merge only if the output is the result and its `failures` is empty.
 
 ```bash
-gh api --paginate repos/<owner>/<repo>/pulls/<number>/reviews  > reviews.json
-gh api --paginate repos/<owner>/<repo>/pulls/<number>/comments > review_comments.json
-gh api --paginate repos/<owner>/<repo>/issues/<number>/comments > issue_comments.json
-
+d=$(mktemp -d) &&
+gh api --paginate repos/<owner>/<repo>/pulls/<number>/reviews  > "$d/reviews.json" &&
+gh api --paginate repos/<owner>/<repo>/pulls/<number>/comments > "$d/review_comments.json" &&
+gh api --paginate repos/<owner>/<repo>/issues/<number>/comments > "$d/issue_comments.json" &&
 jq -n --arg bot '{{AUTOMATED_REVIEWER}}' --arg head '<head-sha>' \
-  --slurpfile R reviews.json --slurpfile RC review_comments.json --slurpfile IC issue_comments.json '
+  --slurpfile R "$d/reviews.json" --slurpfile RC "$d/review_comments.json" --slurpfile IC "$d/issue_comments.json" '
   def norm: ltrimstr("@") | sub("\\[bot\\]$"; "") | ascii_downcase;
   def marker_sha: (.body // "")
     | (capture("^\\s*<!-- automated-pr-review sha=(?<sha>[0-9a-fA-F]{40}) -->") | .sha | ascii_downcase) // null;
@@ -85,7 +85,9 @@ jq -n --arg bot '{{AUTOMATED_REVIEWER}}' --arg head '<head-sha>' \
        (if $latest != null and $sha != ($head | ascii_downcase) then "latest automated review is for \($sha), not the head" else empty end),
        (if $latest != null and $verdict != "No blocking issues" then "verdict is \($verdict // "missing")" else empty end),
        (if ($newer | length) > 0 then "\($newer | length) post(s) after the latest automated review" else empty end)
-     ]}'
+     ]}' ||
+  echo 'GATE NOT RUN: a command above failed, so do not merge'
+[ -z "$d" ] || rm -r -- "$d"
 ```
 
 ## 2. Merge
